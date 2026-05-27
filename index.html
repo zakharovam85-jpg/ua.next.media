@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOUNG — молодіжні новини України</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo" onclick="location.href='index.html'">YOUNG<span style="font-size:12px;">.</span><small>для тих, хто в русі</small></div>
+        <div class="date-time" id="currentDateTime"></div>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tabs-container">
+        <a href="index.html" class="tab-btn active">🏠 Головна</a>
+        <a href="trends.html" class="tab-btn">🔥 Тренди</a>
+        <a href="lifestyle.html" class="tab-btn">✨ Лайфстайл</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="featured-news" id="featuredNews"></div>
+
+    <div class="section-title">📈 У тренді цього тижня</div>
+    <div class="trending-list" id="trendingList"></div>
+
+    <div class="section-title">⚡ Свіжі новини</div>
+    <div class="news-grid" id="latestNews"></div>
+
+    <div class="subscribe">
+        <h3>📱 Будь у тусовці</h3>
+        <p>Підпишись — отримуй найцікавіше в Telegram та Instagram</p>
+        <div class="subscribe-form">
+            <input type="email" id="subEmail" placeholder="твій email">
+            <button onclick="subscribeNews()">Підписатись</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>🔥 YOUNG — медіа для нового покоління</p>
+    <p>новини, тренди, лайфстайл | 2026</p>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</div>
+
+<div id="newsModal" class="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header"><h2 id="modalTitle"></h2><span class="close-modal" onclick="closeModal()">&times;</span></div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const allNews = [
+        { id: 1, title: "🎪 Фестиваль «АТМОСФЕРА» зібрав 20 000 молоді в Києві", excerpt: "Три дні музики, вуличного мистецтва та нетворкінгу.", content: "Молодіжний фестиваль став наймасштабнішою подією року. Понад 20 000 відвідувачів, 50 спікерів, 30 музичних гуртів. Організатори вже анонсували наступний фестиваль у Львові.", emoji: "🎪", date: "2026-05-20", views: 28500, category: "Тренди" },
+        { id: 2, title: "💻 IT-стартап харківських студентів залучив $500 000", excerpt: "Додаток для пошуку менторів став хітом у США та Європі.", content: "Стартап Mentory отримав інвестиції від фонду Horizon Capital. Вже зараз додатком користуються 150 000 людей.", emoji: "💻", date: "2026-05-19", views: 15780, category: "Лайфстайл" },
+        { id: 3, title: "📱 TikTok запускає грантову програму для блогерів", excerpt: "Кращі креатори отримають по $10 000 на розвиток контенту.", content: "Конкурс триватиме до кінця червня. Переможців обиратиме журі з топових блогерів України.", emoji: "📱", date: "2026-05-18", views: 34210, category: "Тренди" },
+        { id: 4, title: "🎵 Новий альбом «Цвіт Кульбаби» очолив чарти Spotify", excerpt: "Платівка «Молодість» зібрала понад 10 млн прослуховувань.", content: "Третій студійний альбом гурту став проривом. У червні гурт вирушає у всеукраїнський тур.", emoji: "🎵", date: "2026-05-17", views: 23100, category: "Тренди" },
+        { id: 5, title: "🎓 Грант на навчання в Німеччині для студентів", excerpt: "Дедлайн — 1 червня. Детальна інструкція від тієї, хто вже навчається.", content: "DAAD пропонує 50 грантів для українських студентів. Витрати на проживання та навчання покриваються повністю.", emoji: "🎓", date: "2026-05-16", views: 9870, category: "Лайфстайл" },
+        { id: 6, title: "🏢 Як Z-команди змінюють формат роботи", excerpt: "Без дрес-коду, гнучкий графік та ментальне здоров'я.", content: "70% компаній впроваджують політику work-life balance саме через запит молоді.", emoji: "🏢", date: "2026-05-15", views: 12450, category: "Лайфстайл" },
+        { id: 7, title: "🌍 Топ-5 місць в Україні для подорожі з друзями", excerpt: "Бюджетно, красиво та незабутньо — куди поїхати молоді.", content: "Буковель, озеро Синевир, Тустань, аквапарк та фестиваль «Ше.Fest». Бюджет — від 1500 грн.", emoji: "🌍", date: "2026-05-14", views: 8750, category: "Лайфстайл" }
+    ];
+
+    const latestNews = [...allNews].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 6);
+    const trendingNews = [...allNews].sort((a,b) => b.views - a.views).slice(0, 4);
+    const featured = [...allNews].sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+
+    function formatDate(dateStr) { const d = new Date(dateStr); return d.getDate().toString().padStart(2,'0') + '.' + (d.getMonth()+1).toString().padStart(2,'0') + '.' + d.getFullYear(); }
+    
+    function openNews(news) { 
+        document.getElementById('modalTitle').innerHTML = news.title;
+        document.getElementById('modalBody').innerHTML = '<div class="modal-emoji">' + news.emoji + '</div><div class="modal-meta"><span>📅 ' + formatDate(news.date) + '</span><span>👁️ ' + news.views.toLocaleString() + '</span><span>📌 ' + news.category + '</span></div><p style="line-height:1.6; color:#b0b0c0;">' + news.content + '</p>';
+        document.getElementById('newsModal').style.display = 'flex';
+    }
+    
+    function closeModal() { document.getElementById('newsModal').style.display = 'none'; }
+    function subscribeNews() { const email = document.getElementById('subEmail').value; if(email) alert('🔥 Дякуємо! На ' + email + ' надіслано підтвердження.'); else alert('Введи email'); }
+    
+    function renderFeatured() {
+        document.getElementById('featuredNews').innerHTML = '<div class="featured-emoji">' + featured.emoji + '</div><div class="featured-content"><div class="featured-badge">✨ Головне сьогодні</div><div class="featured-title">' + featured.title + '</div><div class="featured-excerpt">' + featured.excerpt + '</div><div><span style="color:#6c6c7a; font-size:13px;">📅 ' + formatDate(featured.date) + ' · 👁️ ' + featured.views.toLocaleString() + '</span></div></div>';
+        document.querySelector('.featured-news').onclick = () => openNews(featured);
+    }
+    
+    function renderTrending() {
+        let html = '';
+        for(let i = 0; i < trendingNews.length; i++) {
+            html += '<div class="trending-item" onclick="openNews(allNews.find(x=>x.id===' + trendingNews[i].id + '))"><div class="trending-number">' + (i+1) + '</div><div class="trending-title">' + trendingNews[i].title + '</div><div class="trending-views">👁️ ' + trendingNews[i].views.toLocaleString() + '</div></div>';
+        }
+        document.getElementById('trendingList').innerHTML = html;
+    }
+    
+    function renderLatest() {
+        let html = '';
+        for(let i = 0; i < latestNews.length; i++) {
+            const n = latestNews[i];
+            html += '<div class="news-card" onclick="openNews(allNews.find(x=>x.id===' + n.id + '))"><div class="news-emoji">' + n.emoji + '<div class="news-category">' + n.category + '</div></div><div class="news-content"><div class="news-title">' + n.title + '</div><div class="news-excerpt">' + n.excerpt + '</div><div class="news-meta"><span>📅 ' + formatDate(n.date) + '</span><span>👁️ ' + n.views.toLocaleString() + '</span></div></div></div>';
+        }
+        document.getElementById('latestNews').innerHTML = html;
+    }
+    
+    function updateDateTime() { 
+        const d = new Date(); 
+        document.getElementById('currentDateTime').innerHTML = d.toLocaleString('uk-UA', { hour:'2-digit', minute:'2-digit', day:'numeric', month:'short' }); 
+    }
+    
+    setInterval(updateDateTime, 1000); 
+    updateDateTime();
+    renderFeatured(); renderTrending(); renderLatest();
+    
+    window.addEventListener('scroll', function() { 
+        const el = document.getElementById('scrollTop');
+        if(window.scrollY > 300) el.classList.add('show');
+        else el.classList.remove('show');
+    });
+    
+    window.openNews = openNews; window.closeModal = closeModal; window.subscribeNews = subscribeNews; window.allNews = allNews;
+</script>
+</body>
+</html>

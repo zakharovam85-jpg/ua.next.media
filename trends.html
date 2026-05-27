@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Тренди | YOUNG</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo" onclick="location.href='index.html'">YOUNG<span style="font-size:12px;">.</span><small>для тих, хто в русі</small></div>
+        <div class="date-time" id="currentDateTime"></div>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tabs-container">
+        <a href="index.html" class="tab-btn">🏠 Головна</a>
+        <a href="trends.html" class="tab-btn active">🔥 Тренди</a>
+        <a href="lifestyle.html" class="tab-btn">✨ Лайфстайл</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="category-header">
+        <h1>🔥 Тренди</h1>
+        <p>Що зараз хайпово в Україні та світі</p>
+    </div>
+    <div class="news-grid" id="trendsNews"></div>
+    <div class="subscribe">
+        <h3>📱 Будь у тусовці</h3>
+        <p>Підпишись — отримуй найцікавіше</p>
+        <div class="subscribe-form">
+            <input type="email" id="subEmail" placeholder="твій email">
+            <button onclick="subscribeNews()">Підписатись</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>🔥 YOUNG — медіа для нового покоління</p>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</div>
+
+<div id="newsModal" class="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header"><h2 id="modalTitle"></h2><span class="close-modal" onclick="closeModal()">&times;</span></div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const trendsNews = [
+        { id: 1, title: "🎪 Фестиваль «АТМОСФЕРА» зібрав 20 000 молоді", excerpt: "Три дні музики, вуличного мистецтва та нетворкінгу.", content: "Молодіжний фестиваль став наймасштабнішою подією року. Понад 20 000 відвідувачів, 50 спікерів, 30 музичних гуртів. Організатори вже анонсували наступний фестиваль у Львові.", emoji: "🎪", date: "2026-05-20", views: 28500, category: "Тренди" },
+        { id: 2, title: "📱 TikTok запускає грантову програму для блогерів", excerpt: "Кращі креатори отримають по $10 000 на розвиток контенту.", content: "Конкурс триватиме до кінця червня. Переможців обиратиме журі з топових блогерів України. Умови: вік від 16 років, активний акаунт.", emoji: "📱", date: "2026-05-18", views: 34210, category: "Тренди" },
+        { id: 3, title: "🎵 Новий альбом «Цвіт Кульбаби» очолив чарти Spotify", excerpt: "Платівка «Молодість» зібрала понад 10 млн прослуховувань.", content: "Третій студійний альбом гурту став проривом. Пісні «Танцюй» та «Вільні» вже два тижні тримаються в топ-5. У червні гурт вирушає у всеукраїнський тур.", emoji: "🎵", date: "2026-05-17", views: 23100, category: "Тренди" },
+        { id: 4, title: "👟 Кросівки з перероблених матеріалів — новий тренд", excerpt: "Екологічний футвір набирає обертів.", content: "Стартап ReBorn Shoes збирає пластик з узбережжя Одеси та переробляє його на кросівки. Ціна — від 1500 грн. За перший місяць продали 500 пар.", emoji: "👟", date: "2026-05-14", views: 12450, category: "Тренди" },
+        { id: 5, title: "💻 Digital-мінімум: як створити онлайн-бренд без бюджету", excerpt: "Покроковий гайд від SMM-експертки для підлітків.", content: "Безкоштовні інструменти для створення логотипа, лендінгу та контенту. Як знайти перших клієнтів через TikTok та Instagram.", emoji: "💻", date: "2026-05-12", views: 8760, category: "Тренди" }
+    ];
+
+    function formatDate(dateStr) { const d = new Date(dateStr); return d.getDate().toString().padStart(2,'0') + '.' + (d.getMonth()+1).toString().padStart(2,'0') + '.' + d.getFullYear(); }
+    
+    function openNews(news) { 
+        document.getElementById('modalTitle').innerHTML = news.title;
+        document.getElementById('modalBody').innerHTML = '<div class="modal-emoji">' + news.emoji + '</div><div class="modal-meta"><span>📅 ' + formatDate(news.date) + '</span><span>👁️ ' + news.views.toLocaleString() + '</span><span>📌 ' + news.category + '</span></div><p style="line-height:1.6; color:#b0b0c0;">' + news.content + '</p>';
+        document.getElementById('newsModal').style.display = 'flex';
+    }
+    
+    function closeModal() { document.getElementById('newsModal').style.display = 'none'; }
+    function subscribeNews() { const email = document.getElementById('subEmail').value; if(email) alert('🔥 Дякуємо! На ' + email + ' надіслано підтвердження.'); else alert('Введи email'); }
+    
+    function renderTrendsNews() {
+        let html = '';
+        for(let i = 0; i < trendsNews.length; i++) {
+            const n = trendsNews[i];
+            html += '<div class="news-card" onclick="openNews(trendsNews[' + i + '])"><div class="news-emoji">' + n.emoji + '<div class="news-category">' + n.category + '</div></div><div class="news-content"><div class="news-title">' + n.title + '</div><div class="news-excerpt">' + n.excerpt + '</div><div class="news-meta"><span>📅 ' + formatDate(n.date) + '</span><span>👁️ ' + n.views.toLocaleString() + '</span></div></div></div>';
+        }
+        document.getElementById('trendsNews').innerHTML = html;
+    }
+    
+    function updateDateTime() { 
+        const d = new Date(); 
+        document.getElementById('currentDateTime').innerHTML = d.toLocaleString('uk-UA', { hour:'2-digit', minute:'2-digit', day:'numeric', month:'short' }); 
+    }
+    
+    setInterval(updateDateTime, 1000); 
+    updateDateTime();
+    renderTrendsNews();
+    
+    window.addEventListener('scroll', function() { 
+        const el = document.getElementById('scrollTop');
+        if(window.scrollY > 300) el.classList.add('show');
+        else el.classList.remove('show');
+    });
+    
+    window.openNews = openNews; window.closeModal = closeModal; window.subscribeNews = subscribeNews;
+</script>
+</body>
+</html>

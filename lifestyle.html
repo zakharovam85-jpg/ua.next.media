@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Лайфстайл | YOUNG</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo" onclick="location.href='index.html'">YOUNG<span style="font-size:12px;">.</span><small>для тих, хто в русі</small></div>
+        <div class="date-time" id="currentDateTime"></div>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tabs-container">
+        <a href="index.html" class="tab-btn">🏠 Головна</a>
+        <a href="trends.html" class="tab-btn">🔥 Тренди</a>
+        <a href="lifestyle.html" class="tab-btn active">✨ Лайфстайл</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="category-header">
+        <h1>✨ Лайфстайл</h1>
+        <p>Стиль життя, подорожі, ментальне здоров'я, хобі</p>
+    </div>
+    <div class="news-grid" id="lifestyleNews"></div>
+    <div class="subscribe">
+        <h3>📱 Будь у тусовці</h3>
+        <p>Підпишись — отримуй найцікавіше</p>
+        <div class="subscribe-form">
+            <input type="email" id="subEmail" placeholder="твій email">
+            <button onclick="subscribeNews()">Підписатись</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>🔥 YOUNG — медіа для нового покоління</p>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</div>
+
+<div id="newsModal" class="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header"><h2 id="modalTitle"></h2><span class="close-modal" onclick="closeModal()">&times;</span></div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const lifestyleNews = [
+        {
+            id: 1,
+            title: "🏢 Як Z-команди змінюють формат роботи",
+            excerpt: "Без дрес-коду, гнучкий графік та ментальне здоров'я — нові стандарти офісів.",
+            content: "Опитування серед 2000 українських компаній показало: 70% впроваджують політику work-life balance саме через запит молоді. Експерти пояснюють, чому це вигідно бізнесу. Також розповідаємо про найнезвичайніші офіси країни — з кімнатами для сну, настільним тенісом та навіть зоокуточками.",
+            emoji: "🏢",
+            date: "2026-05-13",
+            views: 12450,
+            category: "Лайфстайл"
+        },
+        {
+            id: 2,
+            title: "🌍 Топ-5 місць в Україні для подорожі з друзями",
+            excerpt: "Бюджетно, красиво та незабутньо — куди поїхати молоді цього літа.",
+            content: "Збірка найкращих локацій: Буковель (знижки для молоді до 25 років), озеро Синевир, Тустань, Аквапарк «Острів скарбів» та фестиваль «Ше.Fest». Детальний бюджет кожної подорожі — від 1500 до 5000 грн на людину. Також поради, як економити на житлі та транспорті.",
+            emoji: "🌍",
+            date: "2026-05-12",
+            views: 9870,
+            category: "Лайфстайл"
+        },
+        {
+            id: 3,
+            title: "📚 Саморозвиток без грошей: 10 безкоштовних курсів онлайн",
+            excerpt: "Вчитися можна в будь-якому віці — і не платити ні копійки.",
+            content: "Підбірка курсів від Prometheus, EdEra, Coursera (з фінансовою допомогою), Google Digital Workshop, Figma Academy. Напрямки: IT, маркетинг, дизайн, підприємництво, англійська. Кожен курс триває від 2 до 8 тижнів, видається сертифікат.",
+            emoji: "📚",
+            date: "2026-05-10",
+            views: 15430,
+            category: "Лайфстайл"
+        },
+        {
+            id: 4,
+            title: "🧘 Як боротися з вигоранням: поради від психологів",
+            excerpt: "Техніки, які допоможуть відновити сили під час іспитів та дедлайнів.",
+            content: "Психологи радять техніки «помідора», digital-detox, ведення щоденника вдячності та дихальні практики. Також пояснюємо, коли потрібно звертатися до фахівця. Гарячі лінії психологічної підтримки — безкоштовно та анонімно.",
+            emoji: "🧘",
+            date: "2026-05-08",
+            views: 18760,
+            category: "Лайфстайл"
+        },
+        {
+            id: 5,
+            title: "🇪🇺 Молодіжний обмін до Польщі: Erasmus+",
+            excerpt: "Програма для українців 16-25 років. Поїдь безкоштовно!",
+            content: "Міжнародні молодіжні обміни тривають від 7 до 21 дня. Організатори покривають проживання, харчування та проїзд. Розповідаємо, як знайти актуальні проєкти, скласти мотиваційного листа та отримати візу. Дедлайни — щомісяця. Перший виїзд уже в липні.",
+            emoji: "🇪🇺",
+            date: "2026-05-06",
+            views: 7650,
+            category: "Лайфстайл"
+        },
+        {
+            id: 6,
+            title: "💻 IT-стартап харківських студентів залучив $500 000",
+            excerpt: "Додаток для пошуку менторів став хітом у США та Європі.",
+            content: "Стартап Mentory, створений трьома студентами ХНУРЕ, отримав інвестиції від фонду Horizon Capital. Вже зараз додатком користуються 150 000 людей у 12 країнах.",
+            emoji: "💻",
+            date: "2026-05-05",
+            views: 15780,
+            category: "Лайфстайл"
+        }
+    ];
+
+    function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+        const year = d.getFullYear();
+        return day + '.' + month + '.' + year;
+    }
+
+    function openNews(news) {
+        document.getElementById('modalTitle').innerHTML = news.title;
+        document.getElementById('modalBody').innerHTML = 
+            '<div class="modal-emoji">' + news.emoji + '</div>' +
+            '<div class="modal-meta">' +
+                '<span>📅 ' + formatDate(news.date) + '</span>' +
+                '<span>👁️ ' + news.views.toLocaleString() + '</span>' +
+                '<span>📌 ' + news.category + '</span>' +
+            '</div>' +
+            '<p style="line-height:1.6; color:#b0b0c0;">' + news.content + '</p>';
+        document.getElementById('newsModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('newsModal').style.display = 'none';
+    }
+
+    function subscribeNews() {
+        const email = document.getElementById('subEmail').value;
+        if (email) {
+            alert('🔥 Дякуємо! На ' + email + ' надіслано підтвердження.');
+        } else {
+            alert('Введи email');
+        }
+    }
+
+    function renderLifestyleNews() {
+        let html = '';
+        for (let i = 0; i < lifestyleNews.length; i++) {
+            const n = lifestyleNews[i];
+            html += '<div class="news-card" onclick="openNews(lifestyleNews[' + i + '])">';
+            html += '<div class="news-emoji">' + n.emoji + '<div class="news-category">' + n.category + '</div></div>';
+            html += '<div class="news-content">';
+            html += '<div class="news-title">' + n.title + '</div>';
+            html += '<div class="news-excerpt">' + n.excerpt + '</div>';
+            html += '<div class="news-meta">';
+            html += '<span>📅 ' + formatDate(n.date) + '</span>';
+            html += '<span>👁️ ' + n.views.toLocaleString() + '</span>';
+            html += '</div></div></div>';
+        }
+        document.getElementById('lifestyleNews').innerHTML = html;
+    }
+
+    function updateDateTime() {
+        const d = new Date();
+        const options = { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' };
+        document.getElementById('currentDateTime').innerHTML = d.toLocaleString('uk-UA', options);
+    }
+
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+    renderLifestyleNews();
+
+    window.addEventListener('scroll', function() {
+        const el = document.getElementById('scrollTop');
+        if (window.scrollY > 300) {
+            el.classList.add('show');
+        } else {
+            el.classList.remove('show');
+        }
+    });
+
+    window.openNews = openNews;
+    window.closeModal = closeModal;
+    window.subscribeNews = subscribeNews;
+</script>
+</body>
+</html>
